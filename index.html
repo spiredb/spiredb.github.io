@@ -116,9 +116,104 @@
             </div>
         );
 
+        const LaunchModal = ({ isOpen, onClose }) => {
+            if (!isOpen) return null;
+            const [activeTab, setActiveTab] = useState('docker');
+
+            useEffect(() => {
+                if (isOpen) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = 'unset';
+                }
+                return () => document.body.style.overflow = 'unset';
+            }, [isOpen]);
+
+            return (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+                    <div className="relative w-full max-w-2xl bg-[#0b0f1a] border border-white/10 rounded-3xl p-8 shadow-2xl animate-fade-in-up">
+                        <button onClick={onClose} className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white transition-colors">
+                            <Icon name="x" size={24} />
+                        </button>
+
+                        <h2 className="text-3xl font-black text-white mb-2 uppercase italic tracking-tighter">Launch <span className="text-indigo-500">SpireDB</span></h2>
+                        <p className="text-slate-400 mb-8">Select your preferred deployment method.</p>
+
+                        <div className="flex gap-4 mb-8 border-b border-white/10">
+                            {['docker', 'helm'].map(tab => (
+                                <button
+                                    key={tab}
+                                    onClick={() => setActiveTab(tab)}
+                                    className={`pb-4 px-2 text-sm font-bold uppercase tracking-widest transition-all relative ${activeTab === tab ? 'text-white' : 'text-slate-500 hover:text-slate-300'
+                                        }`}
+                                >
+                                    {tab}
+                                    {activeTab === tab && (
+                                        <div className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]" />
+                                    )}
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className="min-h-[200px]">
+                            {activeTab === 'docker' && (
+                                <div className="space-y-6">
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between text-xs font-bold text-slate-400 uppercase tracking-wider">
+                                            <span>Pull Image</span>
+                                        </div>
+                                        <div className="bg-black/50 border border-white/10 rounded-xl p-4 font-mono text-sm text-indigo-300 flex items-center justify-between group">
+                                            <code>docker pull ghcr.io/spiredb/spiredb:latest</code>
+                                            <Icon name="copy" size={16} className="text-slate-600 group-hover:text-white cursor-pointer transition-colors" />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between text-xs font-bold text-slate-400 uppercase tracking-wider">
+                                            <span>Run Container</span>
+                                        </div>
+                                        <div className="bg-black/50 border border-white/10 rounded-xl p-4 font-mono text-sm text-indigo-300 flex items-center justify-between group">
+                                            <code>docker run -d -p 6379:6379 -p 50051:50051 -p 50052:50052 --name spiredb ghcr.io/spiredb/spiredb</code>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-4 text-[10px] items-center text-slate-500 font-mono">
+                                        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-rose-500" /> 6379 (RESP)</span>
+                                        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-500" /> 50051 (Metadata)</span>
+                                        <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-indigo-500" /> 50052 (Data Access)</span>
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeTab === 'helm' && (
+                                <div className="space-y-6">
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between text-xs font-bold text-slate-400 uppercase tracking-wider">
+                                            <span>Add Repo</span>
+                                        </div>
+                                        <div className="bg-black/50 border border-white/10 rounded-xl p-4 font-mono text-sm text-indigo-300">
+                                            <code>helm repo add spiredb https://charts.spire.zone</code>
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <div className="flex justify-between text-xs font-bold text-slate-400 uppercase tracking-wider">
+                                            <span>Install Chart</span>
+                                        </div>
+                                        <div className="bg-black/50 border border-white/10 rounded-xl p-4 font-mono text-sm text-indigo-300">
+                                            <code>helm install spiredb spiredb/spiredb</code>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
         const App = () => {
             const [activeTab, setActiveTab] = useState('elixir');
             const [scrolled, setScrolled] = useState(false);
+            const [isModalOpen, setIsModalOpen] = useState(false);
 
             useEffect(() => {
                 const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -187,9 +282,9 @@
                                 A distributed database where <span className="text-white">Elixir</span> governs the cluster and <span className="text-white">Rust</span> optimizes the compute.
                             </p>
                             <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-                                <a href="#" className="flex items-center justify-center px-12 py-5 bg-indigo-600 text-white font-black rounded-2xl hover:scale-105 transition-all shadow-2xl shadow-indigo-600/30 uppercase tracking-widest">
+                                <button onClick={() => setIsModalOpen(true)} className="flex items-center justify-center px-12 py-5 bg-indigo-600 text-white font-black rounded-2xl hover:scale-105 transition-all shadow-2xl shadow-indigo-600/30 uppercase tracking-widest">
                                     Launch Spire
-                                </a>
+                                </button>
                                 <a href="/docs" className="flex items-center justify-center px-12 py-5 bg-white/5 border border-white/10 text-white font-black rounded-2xl hover:bg-white/10 transition-all uppercase tracking-widest backdrop-blur-md">
                                     Read Docs
                                 </a>
@@ -287,6 +382,8 @@
                         </div>
                         <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em]">© 2026 SPIREDB PROJECT :: ELIXIR + RUST</p>
                     </footer>
+
+                    <LaunchModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
                 </div>
             );
         };
