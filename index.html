@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpireDB | All-in-one Distributed Database</title>
+    <link rel="icon" type="image/svg+xml" href="art/spire-square.svg">
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://spire.zone/">
+    <meta property="og:title" content="SpireDB | All-in-one Distributed Database">
+    <meta property="og:description"
+        content="All-in-one distributed database where Elixir governs the cluster and Rust optimizes the compute.">
+    <meta property="og:image" content="https://spire.zone/art/spire-square.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://spire.zone/">
+    <meta property="twitter:title" content="SpireDB | Distributed all-in-one Database">
+    <meta property="twitter:description"
+        content="All-in-one distributed database where Elixir governs the cluster and Rust optimizes the compute.">
+    <meta property="twitter:image" content="https://spire.zone/art/spire-square.png">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React and Babel for browser-side compilation -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,700;0,800;1,400;1,800&display=swap');
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #02040a;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        .mesh-gradient {
+            background-image:
+                radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 1) 0, transparent 50%),
+                radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 1) 0, transparent 50%),
+                radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 1) 0, transparent 50%);
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #02040a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 10px;
+        }
+
+        /* Typography fix for large italic headings */
+        .hero-heading {
+            line-height: 0.9;
+            padding-bottom: 0.1em;
+            /* Ensures descenders like 'y' aren't clipped */
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Custom Icon Component to handle Lucide in React browser mode
+        const Icon = ({ name, size = 24, className = "" }) => {
+            return <i data-lucide={name} style={{ width: size, height: size }} className={className}></i>;
+        };
+
+        const FeatureCard = ({ icon, title, description, colorClass }) => (
+            <div className="group relative p-8 rounded-3xl bg-slate-950/40 border border-white/10 hover:border-white/20 transition-all duration-500 backdrop-blur-xl overflow-hidden shadow-2xl">
+                <div className={`absolute -top-12 -right-12 w-24 h-24 blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-gradient-to-br ${colorClass}`} />
+                <div className="relative z-10">
+                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 shadow-lg transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 bg-gradient-to-br ${colorClass} bg-opacity-20`}>
+                        <Icon name={icon} className="text-white" size={28} />
+                    </div>
+                    <h3 className="text-2xl font-bold text-white mb-4 tracking-tight">{title}</h3>
+                    <p className="text-slate-400 leading-relaxed font-medium">{description}</p>
+                </div>
+            </div>
+        );
+
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('elixir');
+            const [scrolled, setScrolled] = useState(false);
+
+            useEffect(() => {
+                const handleScroll = () => setScrolled(window.scrollY > 20);
+                window.addEventListener('scroll', handleScroll);
+                // Refresh lucide icons
+                lucide.createIcons();
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
+
+            useEffect(() => {
+                lucide.createIcons();
+            }, [activeTab]);
+
+            const architectureData = {
+                elixir: {
+                    title: "SpireDB (Elixir Core)",
+                    accent: "from-purple-500 to-indigo-600",
+                    desc: "Powered by Elixir and the BEAM. Handles massive concurrency, distributed Raft consensus, and the Placement Driver (PD) for zero-downtime scaling.",
+                    code: "defmodule SpireDB.Core do\n  use GenServer\n  def handle_call({:propose, cmd}, _from, state) do\n    Ra.process_command(cmd)\n  end\nend"
+                },
+                rust: {
+                    title: "SpireSQL (Rust Engine)",
+                    accent: "from-orange-500 to-red-600",
+                    desc: "Performance-critical SQL layer and vector indexing. Written in Rust for zero-cost abstractions, memory safety, and SIMD-accelerated execution.",
+                    code: "#[derive(Serialize)]\npub struct QueryPlan {\n    pub table: String,\n    pub scan_type: ScanType,\n}\nlet batch = data_access.scan(range).await?;"
+                },
+                gateway: {
+                    title: "SpireWire (RESP)",
+                    accent: "from-cyan-400 to-blue-500",
+                    desc: "A high-performance RESP gateway built with Elixir/Ranch. Translates standard Redis commands into distributed Raft proposals.",
+                    code: "> SET user:42 \"SpireDB\"\nOK\n\n> EXPLAIN SELECT * FROM users\n[RA-TERM: 4] Distributed Scan"
+                }
+            };
+
+            return (
+                <div className="min-h-screen">
+                    {/* Header */}
+                    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'py-4 bg-black/80 backdrop-blur-xl border-b border-white/5' : 'py-6 bg-transparent'}`}>
+                        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <img src="art/spire-square.svg" className="w-10 h-10 rounded-xl shadow-2xl" alt="SpireDB Logo" />
+                                <span className="text-2xl font-black tracking-tighter text-white uppercase italic">Spire<span className="text-indigo-400 not-italic">DB</span></span>
+                            </div>
+                            <div className="hidden md:flex items-center gap-10 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                                <a href="#features" className="hover:text-indigo-400 transition-colors">Features</a>
+                                <a href="#architecture" className="hover:text-indigo-400 transition-colors">Stack</a>
+                                <a href="https://github.com/spiredb/spiredb" className="px-6 py-2 bg-white text-black rounded-full hover:bg-indigo-500 hover:text-white transition-all">GITHUB</a>
+                            </div>
+                        </div>
+                    </nav>
+
+                    {/* Hero */}
+                    <section className="relative pt-48 pb-32 overflow-hidden mesh-gradient">
+                        <div className="max-w-7xl mx-auto px-6 text-center relative z-10">
+                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-indigo-300 text-[10px] font-black uppercase tracking-[0.2em] mb-12 backdrop-blur-md">
+                                <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+                                ELIXIR & RUST :: THE DUAL-ENGINE ASCENT
+                            </div>
+                            <h1 className="hero-heading text-7xl md:text-[10rem] font-black text-white mb-8 tracking-tighter uppercase italic overflow-visible">
+                                <span className="block opacity-90 pr-2">Scalable</span>
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-orange-500 pr-4 inline-block">
+                                    Symmetry
+                                </span>
+                            </h1>
+                            <p className="max-w-2xl mx-auto text-xl md:text-2xl text-slate-400 mb-14 leading-relaxed font-medium">
+                                A distributed database where <span className="text-white">Elixir</span> governs the cluster and <span className="text-white">Rust</span> optimizes the compute.
+                            </p>
+                            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+                                <a href="#" className="flex items-center justify-center px-12 py-5 bg-indigo-600 text-white font-black rounded-2xl hover:scale-105 transition-all shadow-2xl shadow-indigo-600/30 uppercase tracking-widest">
+                                    Launch Spire
+                                </a>
+                                <a href="/docs" className="flex items-center justify-center px-12 py-5 bg-white/5 border border-white/10 text-white font-black rounded-2xl hover:bg-white/10 transition-all uppercase tracking-widest backdrop-blur-md">
+                                    Read Docs
+                                </a>
+                            </div>
+                        </div>
+
+                        {/* Floating Visual */}
+                        <div className="mt-32 max-w-5xl mx-auto px-6 floating">
+                            <div className="relative p-[1px] rounded-[32px] bg-gradient-to-br from-indigo-500 via-purple-500 to-orange-400 shadow-2xl">
+                                <div className="bg-[#0b0f1a] rounded-[31px] overflow-hidden grid md:grid-cols-2">
+                                    <div className="p-8 border-r border-white/5 font-mono text-sm">
+                                        <div className="flex gap-2 mb-6">
+                                            <div className="w-3 h-3 rounded-full bg-rose-500" />
+                                            <div className="w-3 h-3 rounded-full bg-emerald-500" />
+                                        </div>
+                                        <p className="text-purple-400 italic"># SpireDB.PD.Status</p>
+                                        <p className="text-slate-300">Cluster: Active (16 Regions)</p>
+                                        <p className="text-emerald-400">✓ Consensus: Linearizable</p>
+                                        <p className="text-orange-400 mt-6 italic"># SpireSQL.Engine</p>
+                                        <p className="text-slate-500">&gt; Vector search init...</p>
+                                        <div className="mt-2 pl-4 border-l-2 border-orange-500/30">
+                                            <p className="text-xs text-cyan-400">Streaming Arrow Batch [256kb]</p>
+                                        </div>
+                                    </div>
+                                    <div className="p-8 bg-black flex flex-col justify-center gap-6">
+                                        <div className="flex items-center gap-4">
+                                            <div className="p-3 bg-orange-500/10 rounded-xl">
+                                                <Icon name="flame" className="text-orange-500" />
+                                            </div>
+                                            <div>
+                                                <div className="text-white font-black">Rust Compute</div>
+                                                <div className="text-[10px] text-orange-400 font-bold uppercase tracking-widest">Zero-Copy Perf</div>
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                                                <div className="h-full bg-gradient-to-r from-indigo-500 to-orange-500 w-[94%]" />
+                                            </div>
+                                            <div className="flex justify-between text-[10px] font-black text-slate-600">
+                                                <span>THROUGHPUT</span>
+                                                <span>200k+ OPS/SEC</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Features */}
+                    <section id="features" className="py-32 bg-[#02040a]">
+                        <div className="max-w-7xl mx-auto px-6">
+                            <div className="mb-20">
+                                <h2 className="text-5xl md:text-7xl font-black text-white mb-6 tracking-tighter uppercase italic">The New <span className="text-indigo-400">Standard</span></h2>
+                                <p className="text-xl text-slate-500 max-w-xl">Elixir builds the fortress. Rust sharpens the blade.</p>
+                            </div>
+                            <div className="grid md:grid-cols-3 gap-8">
+                                <FeatureCard icon="wind" title="BEAM Resilience" description="Built with OTP for unmatched uptime. The database that never stops breathing." colorClass="from-indigo-500 to-purple-600" />
+                                <FeatureCard icon="cpu" title="Rust Precision" description="Memory-safe, vectorized query engine. Speed without the compromise." colorClass="from-orange-500 to-red-600" />
+                                <FeatureCard icon="globe" title="Geo-Distributed" description="Multi-region Raft consensus for strong consistency across continents." colorClass="from-cyan-400 to-blue-600" />
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Architecture Selector */}
+                    <section id="architecture" className="py-32 relative overflow-hidden">
+                        <div className="max-w-7xl mx-auto px-6">
+                            <div className="flex flex-col lg:flex-row gap-20 items-center">
+                                <div className="flex-1 space-y-4">
+                                    {Object.entries(architectureData).map(([key, val]) => (
+                                        <div key={key} onClick={() => setActiveTab(key)} className={`p-6 rounded-2xl cursor-pointer transition-all ${activeTab === key ? 'bg-white/10 border border-white/20' : 'opacity-40 grayscale hover:opacity-100 hover:grayscale-0'}`}>
+                                            <div className="flex items-center justify-between">
+                                                <span className="font-black uppercase tracking-widest text-white">{val.title}</span>
+                                                <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${val.accent}`} />
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="flex-1 text-center lg:text-left">
+                                    <h2 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tighter uppercase italic">{architectureData[activeTab].title}</h2>
+                                    <p className="text-xl text-slate-400 mb-10">{architectureData[activeTab].desc}</p>
+                                    <div className="p-8 rounded-3xl bg-slate-950 border border-white/5 font-mono text-sm text-indigo-300 text-left">
+                                        <pre>{architectureData[activeTab].code}</pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Footer */}
+                    <footer className="py-20 border-t border-white/5 text-center">
+                        <div className="mb-8 flex justify-center gap-3">
+                            <img src="art/spire-square.svg" className="w-8 h-8 rounded-lg" alt="SpireDB Logo" />
+                            <span className="text-xl font-black text-white italic">Spire<span className="text-indigo-400 not-italic">DB</span></span>
+                        </div>
+                        <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em]">© 2026 SPIREDB PROJECT :: ELIXIR + RUST</p>
+                    </footer>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+
+</html>
