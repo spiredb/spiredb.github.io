@@ -193,17 +193,34 @@
     .sidebar>h1 {
       text-align: center;
       padding: 1rem;
+      margin-bottom: 2rem;
     }
 
     .sidebar>h1 a {
       color: #f8fafc !important;
       text-decoration: none;
+      font-weight: 800;
+      font-size: 1.5rem;
+      letter-spacing: -0.05em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
     }
 
     .sidebar>h1 img {
-      max-width: 48px;
-      margin-right: 0.5rem;
-      vertical-align: middle;
+      max-width: 80px;
+      margin-right: 0;
+      filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.3));
+    }
+
+    .sidebar>h1 span {
+      background: linear-gradient(to right, #818cf8, #c084fc, #fb923c);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-transform: uppercase;
+      font-style: italic;
     }
 
     /* Search box */
@@ -250,7 +267,7 @@
 
   <script>
     window.$docsify = {
-      name: '<img src="/art/spire-square.svg" alt="SpireDB"> SpireDB',
+      name: '<img src="/art/spire-square.svg" alt="SpireDB"> <span>SpireDB</span>',
       // repo: 'https://github.com/spiredb/spiredb', // Removed for cleaner look
       loadSidebar: true,
       subMaxLevel: 3,
