@@ -84,28 +84,10 @@ export SPIRE_NAMESPACE=spiredb
 export SPIRE_RESP_MAX_CONNECTIONS=50000
 ```
 
-## RocksDB Tuning
-
-### Write-Heavy Workload
-
-```bash
-export SPIRE_ROCKSDB_WRITE_BUFFER_SIZE=268435456     # 256MB
-export SPIRE_ROCKSDB_MAX_WRITE_BUFFER_NUMBER=6
-export SPIRE_ROCKSDB_MAX_BACKGROUND_JOBS=8
-```
-
-### Read-Heavy Workload
-
-```bash
-export SPIRE_ROCKSDB_BLOCK_CACHE_SIZE=2147483648    # 2GB
-export SPIRE_ROCKSDB_BLOOM_BITS_PER_KEY=10
-```
-
 ### SSD Storage
 
 ```bash
-export SPIRE_ROCKSDB_TARGET_FILE_SIZE_BASE=134217728  # 128MB
-export SPIRE_ROCKSDB_RATE_LIMIT_BYTES_PER_SEC=209715200  # 200MB/s
+export SPIRE_ROCKSDB_MAX_OPEN_FILES=20000
 ```
 
 ## Elixir Configuration
@@ -115,9 +97,7 @@ For source builds, edit `config/prod.exs`:
 ```elixir
 config :spiredb_store,
   resp_port: 6379,
-  rocksdb_path: "/var/lib/spiredb/data",
-  rocksdb_compression: :none,
-  rocksdb_block_cache_size: 1_073_741_824
+  rocksdb_path: "/var/lib/spiredb/data"
 
 config :spiredb_pd,
   num_regions: 16,

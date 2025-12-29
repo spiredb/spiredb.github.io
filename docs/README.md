@@ -29,33 +29,26 @@ OK
 
 ## Architecture Overview
 
-```
-┌─────────────────────────────────────────┐
-│           SpireDB Cluster               │
-│                                         │
-│  ┌──────────────────────────────────┐  │
-│  │     Placement Driver (PD)        │  │
-│  │  - Cluster metadata              │  │
-│  │  - Region routing                │  │
-│  │  - Health monitoring             │  │
-│  └───────────────┬──────────────────┘  │
-│                  │                      │
-│  ┌───────────────▼──────────────────┐  │
-│  │         Store Nodes              │  │
-│  │  ┌─────────┐  ┌─────────┐       │  │
-│  │  │ Store 1 │  │ Store N │       │  │
-│  │  │ RocksDB │  │ RocksDB │       │  │
-│  │  │  Raft   │  │  Raft   │       │  │
-│  │  └─────────┘  └─────────┘       │  │
-│  └──────────────────────────────────┘  │
-└─────────────────────────────────────────┘
-         ▲
-         │ RESP Protocol
-         │
-    ┌────┴─────┐
-    │  Redis   │
-    │ Clients  │
-    └──────────┘
+```mermaid
+flowchart TB
+    subgraph cluster_main [SpireDB Cluster]
+        direction TB
+        
+        PD[Placement Driver<br/>Cluster Metadata - Routing]
+        
+        subgraph cluster_stores [Store Nodes]
+            direction LR
+            S1[Store 1<br/>RocksDB + Raft]
+            Sn[Store N<br/>RocksDB + Raft]
+        end
+        
+        PD --> S1
+        PD --> Sn
+    end
+
+    Client[Redis Clients]
+    Client -.->|RESP Protocol| PD
+    Client -.->|RESP Protocol| S1
 ```
 
 ## Supported Commands
