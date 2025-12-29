@@ -1,5 +1,7 @@
 # Troubleshooting
 
+Lists common issues and solutions.
+
 ## Common Issues
 
 ### Connection Refused (6379)

@@ -1,5 +1,7 @@
 # Deployment
 
+Below you can see the different ways to deploy SpireDB and also discovery methods.
+
 ## Release Build
 
 Generate a self-contained release using Mix:
@@ -26,31 +28,49 @@ docker run -d \
   ghcr.io/spiredb/spiredb:latest
 ```
 
-## Clustering
+## Kubernetes (Helm)
 
-SpireDB uses Erlang distribution.
+For production Kubernetes deployments, use our official Helm chart.
 
-### DNS Discovery (Kubernetes)
+- [**Helm Deployment Guide**](kubernetes.md) - Full instructions, configuration values, and architecture.
+- [**Helm Charts Repository**](https://github.com/spiredb/charts) - Source code for charts.
 
-Set `SPIRE_DISCOVERY=k8sdns` and configure service details:
-
-```yaml
-env:
-  - name: SPIRE_DISCOVERY
-    value: "k8sdns"
-  - name: SPIRE_SERVICE_NAME
-    value: "spiredb-headless"
-  - name: SPIRE_NAMESPACE
-    valueFrom:
-      fieldRef:
-        fieldPath: metadata.namespace
-```
-
-### Static List (Bare Metal)
-
-Set `SPIRE_DISCOVERY=epmd` and list nodes:
-
+Quick Command:
 ```bash
-export SPIRE_DISCOVERY=epmd
-export SPIRE_CLUSTER_NODES=spiredb@10.0.0.1,spiredb@10.0.0.2
+helm repo add spiredb https://charts.spire.zone
+helm install spiredb spiredb/spiredb -n spiredb --create-namespace
 ```
+
+## Cluster Discovery
+
+SpireDB determines how to find peer nodes and form a cluster based on the `SPIRE_DISCOVERY` environment variable.
+
+### 1. Kubernetes DNS (Recommended)
+Automatically discovers pods backing a Kubernetes Headless Service. This is the default strategy for K8s deployments.
+
+- **Env Var**: `SPIRE_DISCOVERY=k8sdns`
+- **Configuration**:
+  - `SPIRE_SERVICE_NAME` - Name of the headless service (Default: `spiredb-headless`)
+  - `SPIRE_NAMESPACE` - Namespace of the pods (Default: `default`)
+
+### 2. Gossip (Multicast UDP)
+Uses UDP multicast to broadcast presence and discover other nodes on the same subnet. Useful for local Docker networks or bare-metal LANs where multicast is enabled.
+
+- **Env Var**: `SPIRE_DISCOVERY=gossip`
+- **Configuration**:
+  - `SPIRE_MULTICAST_ADDR` - Multicast address (Default: `230.1.1.251`)
+  - **Port**: Fixed at `45892`
+
+### 3. DNS Polling (AWS/Cloud)
+Polls a specific DNS A-record to retrieve a list of peer IP addresses. Useful for AWS ECS service discovery or other non-k8s cloud environments.
+
+- **Env Var**: `SPIRE_DISCOVERY=dnspoll`
+- **Configuration**:
+  - `SPIRE_DNS_QUERY` - The DNS name to query (Default: `spire.zone`)
+
+### 4. Static (EPMD)
+Relies on a static list of node names. Suitable for local development or static IPs.
+
+- **Env Var**: `SPIRE_DISCOVERY=epmd`
+- **Configuration**:
+  - `SPIRE_CLUSTER_NODES` - Comma-separated list of node names (e.g., `spiredb@10.0.1.2,spiredb@10.0.1.3`)
