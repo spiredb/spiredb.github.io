@@ -11,55 +11,88 @@
 
   <!-- Docsify styles -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple-dark.css">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap">
 
   <style>
     :root {
       /* SpireDB color palette - dark theme with purple/blue accents */
-      --theme-color: #8b5cf6;
-      --theme-color-secondary: #6366f1;
+      --theme-color: #6366f1;
+      --theme-color-secondary: #8b5cf6;
 
       /* Background colors */
-      --base-background-color: #0a0a0f;
-      --sidebar-background: #0f0f15;
+      --base-background-color: transparent;
+      --sidebar-background: rgba(15, 15, 21, 0.6);
       --cover-background-color: #0a0a0f;
 
       /* Text colors */
       --base-color: #e2e8f0;
       --heading-color: #f8fafc;
-      --link-color: #a78bfa;
-      --link-color--hover: #c4b5fd;
+      --link-color: #818cf8;
+      --link-color--hover: #a5b4fc;
+      --base-font-family: 'Plus Jakarta Sans', sans-serif;
 
       /* Code blocks */
-      --code-theme-background: #1a1a24;
+      --code-theme-background: #0f0f15;
       --code-theme-text: #e2e8f0;
-      --code-inline-background: #1e1e2e;
-      --code-inline-color: #c4b5fd;
+      --code-inline-background: rgba(255, 255, 255, 0.05);
+      --code-inline-color: #a5b4fc;
 
       /* Sidebar */
       --sidebar-nav-link-color: #94a3b8;
-      --sidebar-nav-link-color--active: #a78bfa;
-      --sidebar-nav-link-color--hover: #c4b5fd;
-      --sidebar-border-color: #1e1e2e;
+      --sidebar-nav-link-color--active: #6366f1;
+      --sidebar-nav-link-color--hover: #e2e8f0;
+      --sidebar-border-color: rgba(255, 255, 255, 0.05);
       --sidebar-width: 280px;
 
       /* Content */
       --content-max-width: 900px;
 
       /* Blockquotes */
-      --blockquote-border-color: #8b5cf6;
-      --blockquote-background: #1a1a24;
+      --blockquote-border-color: #6366f1;
+      --blockquote-background: rgba(99, 102, 241, 0.1);
 
       /* Tables */
       --table-head-background: #1a1a24;
-      --table-row-odd-background: #0f0f15;
+      --table-row-odd-background: rgba(255, 255, 255, 0.02);
 
       /* Search */
-      --search-background: #1a1a24;
-      --search-result-keyword-color: #a78bfa;
+      --search-background: #0f0f15;
+      --search-result-keyword-color: #818cf8;
     }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #02040a;
+      background-image:
+        radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 1) 0, transparent 50%),
+        radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 0.3) 0, transparent 50%),
+        radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 0.3) 0, transparent 50%);
+      background-attachment: fixed;
+    }
+
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #334155;
+    }
+
+    .sidebar {
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
     }
 
     .markdown-section h1 {
