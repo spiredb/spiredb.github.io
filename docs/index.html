@@ -76,6 +76,23 @@
       background-attachment: fixed;
     }
 
+    /* Watermark */
+    body::before {
+      content: "";
+      position: fixed;
+      top: -10%;
+      right: -10%;
+      width: 60vw;
+      height: 60vw;
+      background-image: url('/art/spire-square.svg');
+      background-repeat: no-repeat;
+      background-size: contain;
+      opacity: 0.03;
+      z-index: -1;
+      pointer-events: none;
+      transform: rotate(-10deg);
+    }
+
     /* Custom Scrollbars */
     ::-webkit-scrollbar {
       width: 6px;
@@ -234,7 +251,7 @@
   <script>
     window.$docsify = {
       name: '<img src="/art/spire-square.svg" alt="SpireDB"> SpireDB',
-      repo: 'https://github.com/spiredb/spiredb',
+      // repo: 'https://github.com/spiredb/spiredb', // Removed for cleaner look
       loadSidebar: true,
       subMaxLevel: 3,
       auto2top: true,
@@ -266,8 +283,29 @@
       // Tabs plugin
       tabs: {
         persist: true,
+        persist: true,
         sync: true,
       },
+
+      mermaidConfig: {
+        querySelector: ".mermaid",
+        theme: 'base',
+        themeVariables: {
+          darkMode: true,
+          primaryColor: '#2e1065', // Indigo 950 (node bg)
+          primaryTextColor: '#c4b5fd', // Violet 300
+          primaryBorderColor: '#6366f1', // Indigo 500
+          lineColor: '#818cf8', // Indigo 400
+          secondaryColor: '#1e1b4b',
+          tertiaryColor: '#172554',
+          mainBkg: '#020617', // Slate 950
+          nodeBorder: '#6366f1',
+          clusterBkg: 'rgba(255,255,255,0.02)',
+          clusterBorder: 'rgba(255,255,255,0.05)',
+          defaultLinkColor: '#818cf8',
+          fontFamily: 'Plus Jakarta Sans',
+        }
+      }
     };
   </script>
 
@@ -278,7 +316,10 @@
   <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/docsify-copy-code@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/docsify-pagination@2/dist/docsify-pagination.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify-pagination@2/dist/docsify-pagination.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/docsify-tabs@1"></script>
+  <script src="//cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script src="//unpkg.com/docsify-mermaid@2.0.0/dist/docsify-mermaid.js"></script>
 
   <!-- Syntax highlighting -->
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>

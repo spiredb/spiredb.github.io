@@ -4,21 +4,27 @@ RocksDB-based persistent storage.
 
 ## Architecture
 
-```
-┌──────────────────────────────────┐
-│         Store.KV.Engine          │
-├──────────────────────────────────┤
-│  Block Cache (512MB default)     │
-├──────────────────────────────────┤
-│  Write Buffer (MemTable)         │
-├──────────────────────────────────┤
-│         RocksDB LSM Tree         │
-│  ┌────┐ ┌────┐ ┌────┐ ┌────┐    │
-│  │ L0 │ │ L1 │ │ L2 │ │ L3 │    │
-│  └────┘ └────┘ └────┘ └────┘    │
-├──────────────────────────────────┤
-│           SSD/NVMe               │
-└──────────────────────────────────┘
+```mermaid
+graph TD
+    subgraph Engine[Store.KV.Engine]
+        direction TB
+        BC[Block Cache<br/>512MB Default]
+        WB[Write Buffer<br/>MemTable]
+        
+        subgraph LSM[RocksDB LSM Tree]
+            L0[Level 0]
+            L1[Level 1]
+            L2[Level 2]
+            L3[Level 3]
+            L0 --> L1 --> L2 --> L3
+        end
+
+        BC --- WB
+        WB --> LSM
+    end
+    
+    SSD[(SSD / NVMe)]
+    L3 -.-> SSD
 ```
 
 ## Data Layout

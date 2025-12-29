@@ -4,16 +4,19 @@ SpireDB uses Raft for distributed consensus via the `ra` library.
 
 ## Architecture
 
-```
-┌─────────────────────────────────────────┐
-│              Raft Cluster               │
-│                                         │
-│  ┌─────────┐  ┌─────────┐  ┌─────────┐ │
-│  │ Region1 │  │ Region1 │  │ Region1 │ │
-│  │ Leader  │──│Follower │──│Follower │ │
-│  │ Node A  │  │ Node B  │  │ Node C  │ │
-│  └─────────┘  └─────────┘  └─────────┘ │
-└─────────────────────────────────────────┘
+```mermaid
+graph LR
+    subgraph RaftGroup[Raft Cluster: Region 1]
+        direction LR
+        NodeA[Region 1<br/>Leader<br/>Node A]
+        NodeB[Region 1<br/>Follower<br/>Node B]
+        NodeC[Region 1<br/>Follower<br/>Node C]
+
+        NodeA -->|Replicate| NodeB
+        NodeA -->|Replicate| NodeC
+        NodeB -.->|Heartbeat| NodeA
+        NodeC -.->|Heartbeat| NodeA
+    end
 ```
 
 ## Components
@@ -34,13 +37,19 @@ Per-region data consensus:
 
 ## Write Path
 
-```
-1. Client: SET key value
-2. Leader: Append to Raft log
-3. Leader: Replicate to followers
-4. Quorum: 2/3 nodes acknowledge
-5. Leader: Apply to RocksDB
-6. Leader: Respond to client
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant L as Leader
+    participant F as Followers
+    participant DB as RocksDB
+
+    C->>L: SET key value
+    L->>L: Append to Log
+    L->>F: Append Entries (Replicate)
+    F-->>L: Acknowledge (Quorum)
+    L->>DB: Apply to State Machine
+    L-->>C: Response OK
 ```
 
 Latency: 3-7ms (quorum wait)

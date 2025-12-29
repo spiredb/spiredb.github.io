@@ -4,38 +4,52 @@ SpireDB is built on three core subsystems: the Placement Driver, Store Nodes, an
 
 ## System Overview
 
-```
-┌────────────────────────────────────────────────────┐
-│                  SpireDB Cluster                   │
-│                                                    │
-│  ┌──────────────────────────────────────────────┐ │
-│  │            Placement Driver (PD)             │ │
-│  │  ┌────────────┐  ┌────────────┐             │ │
-│  │  │ PD.Server  │──│ Raft Log   │             │ │
-│  │  │ (Metadata) │  │            │             │ │
-│  │  └────────────┘  └────────────┘             │ │
-│  │       │                                      │ │
-│  │  ┌────▼────────┐  ┌─────────────┐           │ │
-│  │  │ PD.Router   │  │ PD.Scheduler│           │ │
-│  │  │ (Regions)   │  │ (Rebalance) │           │ │
-│  │  └─────────────┘  └─────────────┘           │ │
-│  └──────────────────────────────────────────────┘ │
-│                       │                            │
-│  ┌────────────────────▼─────────────────────────┐ │
-│  │              Store Nodes                      │ │
-│  │                                               │ │
-│  │  ┌─────────────┐  ┌─────────────┐            │ │
-│  │  │  Store 1    │  │  Store N    │            │ │
-│  │  │  ┌───────┐  │  │  ┌───────┐  │            │ │
-│  │  │  │Region1│  │  │  │RegionM│  │            │ │
-│  │  │  │ Raft  │  │  │  │ Raft  │  │            │ │
-│  │  │  └───────┘  │  │  └───────┘  │            │ │
-│  │  │  ┌───────┐  │  │  ┌───────┐  │            │ │
-│  │  │  │RocksDB│  │  │  │RocksDB│  │            │ │
-│  │  │  └───────┘  │  │  └───────┘  │            │ │
-│  │  └─────────────┘  └─────────────┘            │ │
-│  └───────────────────────────────────────────────┘ │
-└────────────────────────────────────────────────────┘
+```mermaid
+graph TB
+    subgraph Cluster[SpireDB Cluster]
+        direction TB
+        
+        subgraph PDLayer[Placement Driver Layer]
+            direction TB
+            PDS[PD.Server<br/>Metadata]
+            subgraph PDComponents
+                direction LR
+                PDR[PD.Router<br/>Routing Table]
+                PDSched[PD.Scheduler<br/>Rebalancing]
+            end
+            PDS --- PDComponents
+        end
+
+        subgraph StoreLayer[Store Node Layer]
+            direction LR
+            
+            subgraph Node1[Store Node 1]
+                direction TB
+                subgraph N1Regions[Regions]
+                    direction LR
+                    N1R1[Region 1]
+                    N1R2[Region ...]
+                    N1R16[Region 16]
+                end
+                N1Rocks[(RocksDB)]
+                N1Regions --> N1Rocks
+            end
+
+            subgraph NodeN[Store Node N]
+                direction TB
+                subgraph NNRegions[Regions]
+                    direction LR
+                    NNR1[Region 1]
+                    NNR2[Region ...]
+                    NNR16[Region 16]
+                end
+                NNRocks[(RocksDB)]
+                NNRegions --> NNRocks
+            end
+        end
+
+        PDLayer -->|Heartbeats & Instruction| StoreLayer
+    end
 ```
 
 ## Components
@@ -80,26 +94,39 @@ Default: 16 regions distributed across nodes.
 
 ### Write Path
 
-```
-1. Client: SET key value
-2. RESP Handler: Parse command
-3. Store.Server: Route to region
-4. Region.Raft: Propose write
-5. Raft: Replicate to quorum
-6. StateMachine: Apply to RocksDB
-7. Response: OK
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant RESP as RESP Handler
+    participant S as Store.Server
+    participant R as Region.Raft
+    participant Q as Quorum
+    participant DB as RocksDB
+
+    C->>RESP: SET key value
+    RESP->>S: Parse Command
+    S->>R: Route to Region
+    R->>Q: Propose Write via Raft
+    Q-->>R: Consensus Reached
+    R->>DB: Apply (StateMachine)
+    R-->>C: OK
 ```
 
 Latency: 3-7ms (Raft consensus overhead)
 
 ### Read Path
 
-```
-1. Client: GET key
-2. RESP Handler: Parse command
-3. Store.Server: Route to region
-4. Direct read from RocksDB
-5. Response: value
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant RESP as RESP Handler
+    participant S as Store.Server
+    participant DB as RocksDB
+
+    C->>RESP: GET key
+    RESP->>S: Parse Command
+    S->>DB: Route & Direct Read
+    DB-->>C: Return Value
 ```
 
 Latency: 0.3-0.5ms (bypasses Raft)
@@ -132,20 +159,24 @@ Region 1 handles keys where `hash(key) % 16 == 0`, etc.
 
 ## Supervision Tree
 
-```
-SpiredbStore.Supervisor
-├── Cluster.Supervisor (libcluster)
-├── Store.Supervisor
-│   ├── Store.KV.Engine
-│   └── Store.Server
-└── Store.API.RESP.Supervisor
-    └── Ranch TCP Listener
+```mermaid
+graph TD
+    subgraph StoreApp[SpiredbStore.App]
+        StoreSup[Store.Supervisor]
+        ClusterSup[Cluster.Supervisor]
+        RESPSup[Store.API.RESP.Supervisor]
+        
+        StoreSup --> Engine[Store.KV.Engine]
+        StoreSup --> Server[Store.Server]
+        RESPSup --> Ranch[Ranch Listener]
+    end
 
-SpiredbPd.Supervisor
-├── PD.Supervisor
-│   └── PD.Server (Raft)
-├── PD.API.GRPCServerSupervisor
-└── PD.Scheduler
+    subgraph PDApp[SpiredbPd.App]
+        PDSup[PD.Supervisor]
+        PDSup --> PDRaft[PD.Server Raft]
+        PDSup --> PDSched[PD.Scheduler]
+        GRPCSup[PD.API.GRPC.Supervisor]
+    end
 ```
 
 ## Technology Stack
