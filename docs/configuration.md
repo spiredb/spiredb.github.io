@@ -20,7 +20,6 @@ All configuration via environment variables with `SPIRE_` prefix.
 | `SPIRE_ROCKSDB_MAX_OPEN_FILES` | `10000` | Max open file handles |
 | `SPIRE_ROCKSDB_BLOCK_CACHE_SIZE` | `536870912` | Block cache (512MB) |
 | `SPIRE_ROCKSDB_WRITE_BUFFER_SIZE` | `134217728` | Write buffer (128MB) |
-| `SPIRE_ROCKSDB_COMPRESSION` | `none` | Compression: `none`, `lz4`, `zstd` |
 
 ### Raft
 
@@ -72,7 +71,6 @@ export SPIRE_NUM_REGIONS=4
 export SPIRE_RESP_PORT=6379
 export SPIRE_RESP_MAX_CONNECTIONS=50000
 export SPIRE_ROCKSDB_PATH=/mnt/data/spiredb
-export SPIRE_ROCKSDB_COMPRESSION=lz4
 export SPIRE_ROCKSDB_BLOCK_CACHE_SIZE=1073741824  # 1GB
 export SPIRE_LOG_LEVEL=info
 ```
@@ -84,7 +82,6 @@ export SPIRE_DISCOVERY=k8sdns
 export SPIRE_SERVICE_NAME=spiredb-headless
 export SPIRE_NAMESPACE=spiredb
 export SPIRE_RESP_MAX_CONNECTIONS=50000
-export SPIRE_ROCKSDB_COMPRESSION=lz4
 ```
 
 ## RocksDB Tuning
@@ -102,13 +99,11 @@ export SPIRE_ROCKSDB_MAX_BACKGROUND_JOBS=8
 ```bash
 export SPIRE_ROCKSDB_BLOCK_CACHE_SIZE=2147483648    # 2GB
 export SPIRE_ROCKSDB_BLOOM_BITS_PER_KEY=10
-export SPIRE_ROCKSDB_COMPRESSION=lz4
 ```
 
 ### SSD Storage
 
 ```bash
-export SPIRE_ROCKSDB_COMPRESSION=lz4
 export SPIRE_ROCKSDB_TARGET_FILE_SIZE_BASE=134217728  # 128MB
 export SPIRE_ROCKSDB_RATE_LIMIT_BYTES_PER_SEC=209715200  # 200MB/s
 ```
@@ -121,7 +116,7 @@ For source builds, edit `config/prod.exs`:
 config :spiredb_store,
   resp_port: 6379,
   rocksdb_path: "/var/lib/spiredb/data",
-  rocksdb_compression: :lz4,
+  rocksdb_compression: :none,
   rocksdb_block_cache_size: 1_073_741_824
 
 config :spiredb_pd,
