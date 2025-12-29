@@ -28,7 +28,6 @@ services:
     environment:
       - SPIRE_RESP_PORT=6379
       - SPIRE_LOG_LEVEL=info
-      - SPIRE_ROCKSDB_COMPRESSION=lz4
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "redis-cli", "-p", "6379", "ping"]
@@ -54,7 +53,6 @@ Pass via `-e` or `environment:` in compose:
 ```bash
 docker run -d \
   -e SPIRE_RESP_PORT=6379 \
-  -e SPIRE_ROCKSDB_COMPRESSION=lz4 \
   -e SPIRE_LOG_LEVEL=info \
   spiredb:latest
 ```

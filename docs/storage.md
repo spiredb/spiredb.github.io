@@ -53,18 +53,6 @@ SPIRE_ROCKSDB_BLOCK_CACHE_SIZE=536870912  # 512MB
 SPIRE_ROCKSDB_BLOOM_BITS_PER_KEY=10
 ```
 
-### Compression
-
-| Level | Use Case |
-|-------|----------|
-| `none` | Low CPU, max speed |
-| `lz4` | Balanced (recommended) |
-| `zstd` | Max compression |
-
-```bash
-SPIRE_ROCKSDB_COMPRESSION=lz4
-```
-
 ### Write Buffer
 
 MemTable before flush to SST.
@@ -136,7 +124,6 @@ SPIRE_ROCKSDB_MAX_BACKGROUND_JOBS=8
 
 ```bash
 SPIRE_ROCKSDB_BLOCK_CACHE_SIZE=2147483648     # 2GB
-SPIRE_ROCKSDB_COMPRESSION=lz4
 ```
 
 ### Mixed Workload
@@ -144,7 +131,6 @@ SPIRE_ROCKSDB_COMPRESSION=lz4
 ```bash
 SPIRE_ROCKSDB_BLOCK_CACHE_SIZE=1073741824     # 1GB
 SPIRE_ROCKSDB_WRITE_BUFFER_SIZE=134217728     # 128MB
-SPIRE_ROCKSDB_COMPRESSION=lz4
 ```
 
 ## Monitoring
