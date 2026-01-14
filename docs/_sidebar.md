@@ -1,14 +1,19 @@
 - [SpireDB Docs](/)
+- **API Reference**
+  - [Command Reference](commands/index.md)
+  - [gRPC API](grpc-api.md)
 - Getting Started
   - [Quick Start](quickstart.md)
   - [Configuration](configuration.md)
+- Features
+  - [Plugin System](plugin-system.md)
+  - [Vector Search](commands/vectors.md)
+  - [Transactions](commands/transactions.md)
+  - [Streams](commands/streams.md)
 - Architecture
   - [Overview](architecture.md)
   - [Raft Consensus](raft.md)
   - [Storage Engine](storage.md)
-- API Reference
-  - [Redis Commands](redis-api.md)
-  - [gRPC API](grpc-api.md)
 - Operations
   - [Deployment](deployment.md)
   - [Docker](docker.md)

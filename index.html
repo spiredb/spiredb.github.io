@@ -612,6 +612,36 @@
                                 <FeatureCard icon="wind" title="BEAM Resilience" description="Built with OTP for unmatched uptime. The database that never stops breathing." colorClass="from-indigo-500 to-purple-600" />
                                 <FeatureCard icon="cpu" title="Rust Precision" description="Memory-safe, JIT-compiled query engine. Speed without the compromise." colorClass="from-orange-500 to-red-600" />
                                 <FeatureCard icon="globe" title="Geo-Distributed" description="Multi-region Raft consensus for strong consistency across continents." colorClass="from-cyan-400 to-blue-600" />
+                                <FeatureCard icon="search" title="Vector Search" description="Native ANN search with ANODE/MANODE algorithms. Redis Search compatible FT.* commands." colorClass="from-emerald-400 to-teal-600" />
+                                <FeatureCard icon="activity" title="Change Streams" description="Real-time CDC with subscribe/acknowledge. Event sourcing, cache invalidation, audit logging." colorClass="from-pink-500 to-rose-600" />
+                                <FeatureCard icon="database" title="Transactions" description="Percolator-style 2PC with savepoints. READ_COMMITTED, REPEATABLE_READ, SERIALIZABLE isolation." colorClass="from-violet-500 to-purple-600" />
+                            </div>
+                            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 mt-6">
+                                <FeatureCard icon="puzzle" title="Plugin System" description="Extend with 5 plugin types: Index, Storage, Function, Protocol, Auth. Hot-reload support." colorClass="from-amber-500 to-orange-600" />
+                                <FeatureCard icon="terminal" title="Redis Protocol" description="Drop-in Redis replacement. Use redis-cli, any Redis client library. 50+ commands." colorClass="from-red-500 to-rose-600" />
+                                <FeatureCard icon="server" title="gRPC API" description="High-performance binary protocol. Arrow IPC for bulk data. Streaming scans." colorClass="from-blue-500 to-indigo-600" />
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* API Reference */}
+                    <section id="api" className="py-24 bg-gradient-to-b from-[#02040a] to-slate-950/50">
+                        <div className="max-w-5xl mx-auto px-6 text-center">
+                            <h2 className="text-3xl sm:text-5xl font-black mb-4 tracking-tighter uppercase italic text-white">Get Started</h2>
+                            <p className="text-lg text-slate-400 mb-12 max-w-2xl mx-auto">Explore the API reference to integrate SpireDB into your applications.</p>
+                            <div className="flex flex-wrap justify-center gap-4">
+                                <a href="/docs/commands/" className="group flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl hover:scale-105 transition-all shadow-xl shadow-indigo-600/20">
+                                    <Icon name="book-open" className="text-white" size={24} />
+                                    <span className="text-white font-black uppercase tracking-wider">Command Reference</span>
+                                </a>
+                                <a href="/docs/grpc-api" className="group flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-2xl hover:scale-105 transition-all shadow-xl shadow-cyan-600/20">
+                                    <Icon name="server" className="text-white" size={24} />
+                                    <span className="text-white font-black uppercase tracking-wider">gRPC API</span>
+                                </a>
+                                <a href="/docs/plugin-system" className="group flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-amber-600 to-orange-600 rounded-2xl hover:scale-105 transition-all shadow-xl shadow-amber-600/20">
+                                    <Icon name="puzzle" className="text-white" size={24} />
+                                    <span className="text-white font-black uppercase tracking-wider">Plugin System</span>
+                                </a>
                             </div>
                         </div>
                     </section>
