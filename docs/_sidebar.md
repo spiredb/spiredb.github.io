@@ -1,6 +1,6 @@
 - [SpireDB Docs](/)
 - **API Reference**
-  - [Command Reference](commands/index.md)
+  - [Command Reference](/commands/index)
   - [gRPC API](grpc-api.md)
 - Getting Started
   - [Quick Start](quickstart.md)
