@@ -221,8 +221,8 @@
                                         <div className="flex justify-between text-xs font-bold text-slate-400 uppercase tracking-wider">
                                             <span>Install Chart</span>
                                         </div>
-                                        <div className="bg-black/50 border border-white/10 rounded-xl p-4 font-mono text-sm text-indigo-300">
-                                            <code>helm install spiredb spiredb/spiredb</code>
+                                        <div className="code-block-scroll bg-black/50 border border-white/10 rounded-xl p-4 font-mono text-sm text-indigo-300">
+                                            <code>helm install spire spiredb/spire --create-namespace --namespace spire --set spiresql.replicaCount=3 --set spiresql.autoscaling.maxReplicas=20</code>
                                         </div>
                                     </div>
                                 </div>

@@ -38,7 +38,11 @@ For production Kubernetes deployments, use our official Helm chart.
 Quick Command:
 ```bash
 helm repo add spiredb https://charts.spire.zone
-helm install spiredb spiredb/spiredb -n spiredb --create-namespace
+helm install spire spiredb/spire \
+  --create-namespace \
+  --namespace spire \
+  --set spiresql.replicaCount=3 \
+  --set spiresql.autoscaling.maxReplicas=20
 ```
 
 ## Cluster Discovery

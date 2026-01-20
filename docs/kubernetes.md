@@ -13,14 +13,18 @@ Production deployment using the SpireDB Helm chart.
 
 ```bash
 # Add repository
-helm repo add spiredb https://spiredb.github.io/helm-charts
+helm repo add spiredb https://charts.spire.zone
 helm repo update
 
-# Install with defaults (3 replicas, gossip discovery)
-helm install spiredb spiredb/spiredb -n spiredb --create-namespace
+# Install with production defaults (3 replicas, gossip discovery)
+helm install spire spiredb/spire \
+  --create-namespace \
+  --namespace spire \
+  --set spiresql.replicaCount=3 \
+  --set spiresql.autoscaling.maxReplicas=20
 
 # Install with custom values
-helm install spiredb spiredb/spiredb -n spiredb --create-namespace -f values.yaml
+helm install spire spiredb/spire -n spire --create-namespace -f values.yaml
 ```
 
 ## Configuration
