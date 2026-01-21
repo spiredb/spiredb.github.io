@@ -46,4 +46,5 @@ OK
 - [Architecture](architecture.md) - Understand the dual-engine design
 - [Kubernetes Deployment](kubernetes.md) - Production setup
 - [Command Reference](commands/index.md) - Full RESP command list
+- [Spire CLI](cli.md) - Cluster management tool
 - [gRPC API](grpc-api.md) - High-performance binary protocol
