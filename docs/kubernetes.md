@@ -73,13 +73,8 @@ spiredb:
     respMaxConnections: 10000
     respConnectionTimeout: 60000
 
-  rocksdb:
+  storage:
     path: /var/lib/spiredb/data
-    compression: lz4
-    blockCacheSize: 1073741824
-    writeBufferSize: 134217728
-    maxOpenFiles: 10000
-    bloomBitsPerKey: 10
 
   raft:
     dataDir: /var/lib/spiredb/regions

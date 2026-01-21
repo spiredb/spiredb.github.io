@@ -42,7 +42,7 @@ sequenceDiagram
     participant C as Client
     participant L as Leader
     participant F as Followers
-    participant DB as RocksDB
+    participant DB as Storage
 
     C->>L: SET key value
     L->>L: Append to Log
@@ -58,7 +58,7 @@ Latency: 3-7ms (quorum wait)
 
 ### Default (Fast)
 
-Direct RocksDB read. No Raft overhead.
+Direct storage read. No Raft overhead.
 
 ```
 Latency: 0.3-0.5ms

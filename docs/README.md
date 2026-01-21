@@ -1,20 +1,33 @@
 # SpireDB
 
-A distributed key-value database with Raft consensus, Redis-compatible API, and RocksDB storage.
+All-in-one Streaming OLTP distributed database where **Elixir** governs the cluster and **Rust** optimizes the compute.
+
+## Architecture
+
+SpireDB is built on a dual-engine architecture:
+
+| Component | Technology | Purpose |
+|-----------|------------|---------|
+| **SpireDB** | Elixir/OTP | Cluster coordination, Raft consensus, fault tolerance |
+| **SpireSQL** | Rust | JIT query execution, vector search, zero-copy performance |
+| **SpireWire** | RESP Protocol | Redis-compatible client gateway |
 
 ## Features
 
-- **Strong Consistency** - Raft consensus ensures linearizable writes
-- **Redis Compatible** - Use existing Redis clients and tools
-- **High Performance** - RocksDB storage with bloom filters and block cache
-- **Horizontally Scalable** - Region-based sharding across nodes
-- **Production Ready** - Docker and Kubernetes deployment support
+- **BEAM Resilience** - Built with OTP for unmatched uptime
+- **Raft Consensus** - Linearizable writes, strong consistency
+- **Redis Compatible** - Drop-in replacement using existing clients
+- **Vector Search** - Native ANN with ANODE/MANODE algorithms
+- **Change Streams** - Real-time CDC for event sourcing
+- **Geo-Distributed** - Multi-region with automatic failover
+- **Transactions** - ACID with multiple isolation levels
+- **Plugin System** - Extend with custom indexes, storage, functions
 
 ## Quick Example
 
 ```bash
 # Start SpireDB
-docker run -p 6379:6379 spiredb/spiredb:latest
+docker run -p 6379:6379 ghcr.io/spiredb/spiredb:latest
 
 # Connect with redis-cli
 redis-cli -p 6379
@@ -23,45 +36,14 @@ redis-cli -p 6379
 OK
 > GET user:1
 "alice"
-> INCR counter
-(integer) 1
+> SPIRE.VECTOR.CREATE embeddings DIM 384
+OK
 ```
-
-## Architecture Overview
-
-```mermaid
-flowchart TB
-    subgraph cluster_main [SpireDB Cluster]
-        direction TB
-        
-        PD[Placement Driver<br/>Cluster Metadata - Routing]
-        
-        subgraph cluster_stores [Store Nodes]
-            direction LR
-            S1[Store 1<br/>RocksDB + Raft]
-            Sn[Store N<br/>RocksDB + Raft]
-        end
-        
-        PD --> S1
-        PD --> Sn
-    end
-
-    Client[Redis Clients]
-    Client -.->|RESP Protocol| PD
-    Client -.->|RESP Protocol| S1
-```
-
-## Supported Commands
-
-| Category | Commands |
-|----------|----------|
-| Strings | `GET`, `SET`, `DEL`, `EXISTS`, `INCR`, `DECR`, `APPEND` |
-| Multi-key | `MGET`, `MSET` |
-| Utility | `PING`, `COMMAND` |
 
 ## Next Steps
 
 - [Quick Start Guide](quickstart.md) - Get running in 5 minutes
-- [Architecture](architecture.md) - Understand internals
-- [Configuration](configuration.md) - Tune for your workload
-- [Deployment](deployment.md) - Production setup
+- [Architecture](architecture.md) - Understand the dual-engine design
+- [Kubernetes Deployment](kubernetes.md) - Production setup
+- [Command Reference](commands/index.md) - Full RESP command list
+- [gRPC API](grpc-api.md) - High-performance binary protocol

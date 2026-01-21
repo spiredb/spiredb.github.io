@@ -31,8 +31,8 @@ graph TB
                     N1R2[Region ...]
                     N1R16[Region 16]
                 end
-                N1Rocks[(RocksDB)]
-                N1Regions --> N1Rocks
+                N1Store[(Storage)]
+                N1Regions --> N1Store
             end
 
             subgraph NodeN[Store Node N]
@@ -43,8 +43,8 @@ graph TB
                     NNR2[Region ...]
                     NNR16[Region 16]
                 end
-                NNRocks[(RocksDB)]
-                NNRegions --> NNRocks
+                NNStore[(Storage)]
+                NNRegions --> NNStore
             end
         end
 
@@ -78,7 +78,7 @@ Data storage and serving nodes:
 |-----------|----------|
 | Store.Server | Request coordination |
 | Store.Region.Raft | Per-region Raft consensus |
-| Store.KV.Engine | RocksDB wrapper |
+| Store.KV.Engine | Persistent storage engine |
 | Store.API.RESP | Redis protocol handler |
 
 ### Region
@@ -101,7 +101,7 @@ sequenceDiagram
     participant S as Store.Server
     participant R as Region.Raft
     participant Q as Quorum
-    participant DB as RocksDB
+    participant DB as Storage
 
     C->>RESP: SET key value
     RESP->>S: Parse Command
@@ -121,7 +121,7 @@ sequenceDiagram
     participant C as Client
     participant RESP as RESP Handler
     participant S as Store.Server
-    participant DB as RocksDB
+    participant DB as Storage
 
     C->>RESP: GET key
     RESP->>S: Parse Command
@@ -145,7 +145,7 @@ Region 1 handles keys where `hash(key) % 16 == 0`, etc.
 
 ```
 /var/lib/spiredb/
-├── data/              # RocksDB data
+├── data/              # Persistent data
 │   ├── CURRENT
 │   ├── MANIFEST-*
 │   ├── *.sst
@@ -185,7 +185,7 @@ graph TD
 |-----------|------------|
 | Language | Elixir/OTP |
 | Consensus | Ra (Raft) |
-| Storage | RocksDB |
+| Storage | LSM-Tree Engine |
 | Protocol | RESP (Redis) |
 | Clustering | libcluster |
 | Observability | Telemetry, Prometheus |

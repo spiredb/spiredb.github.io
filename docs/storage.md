@@ -1,81 +1,31 @@
 # Storage Engine
 
-RocksDB-based persistent storage.
-
-## Architecture
-
-```mermaid
-graph TD
-    subgraph Engine[Store.KV.Engine]
-        direction TB
-        BC[Block Cache<br/>512MB Default]
-        WB[Write Buffer<br/>MemTable]
-        
-        subgraph LSM[RocksDB LSM Tree]
-            L0[Level 0]
-            L1[Level 1]
-            L2[Level 2]
-            L3[Level 3]
-            L0 --> L1 --> L2 --> L3
-        end
-
-        BC --- WB
-        WB --> LSM
-    end
-    
-    SSD[(SSD / NVMe)]
-    L3 -.-> SSD
-```
+Durable, persistent storage with LSM-tree architecture.
 
 ## Data Layout
 
 ```
 /var/lib/spiredb/
-├── data/           # RocksDB files
-│   ├── CURRENT
-│   ├── MANIFEST-*
-│   ├── *.sst       # Sorted String Tables
-│   └── *.log       # WAL
+├── data/           # Persistent data files
 ├── raft/           # Region Raft logs
 │   └── region_*/
 └── pd/             # PD metadata
 ```
 
-## Key Features
+## Configuration
 
-### Block Cache
-
-LRU cache for read performance.
-
-```bash
-SPIRE_ROCKSDB_BLOCK_CACHE_SIZE=536870912  # 512MB
-```
-
-### Bloom Filters
-
-10 bits per key, ~1% false positive rate.
-
-```bash
-SPIRE_ROCKSDB_BLOOM_BITS_PER_KEY=10
-```
-
-### Write Buffer
-
-MemTable before flush to SST.
-
-```bash
-SPIRE_ROCKSDB_WRITE_BUFFER_SIZE=134217728  # 128MB
-SPIRE_ROCKSDB_MAX_WRITE_BUFFER_NUMBER=4
-```
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `SPIRE_DATA_PATH` | `/var/lib/spiredb/data` | Data directory |
 
 ## Operations
 
 ### Point Lookup
 
-1. Check MemTable
-2. Check Block Cache
-3. Check Bloom Filter
-4. Read from SST file
+1. Check in-memory buffer
+2. Check block cache
+3. Check bloom filter
+4. Read from disk
 
 Latency: 0.05-0.2ms (cached)
 
@@ -85,63 +35,18 @@ Latency: 0.05-0.2ms (cached)
 Engine.scan_range(engine, "user:", "user:~", batch_size: 1000)
 ```
 
-Returns batched iterator. Uses RocksDB iterator internally.
+Returns batched iterator for efficient large scans.
 
 ### Write Path
 
-1. Append to WAL
-2. Insert to MemTable
+1. Append to WAL (durability)
+2. Insert to memory buffer
 3. Return to client
-4. Background flush to SST
-
-## Compaction
-
-### Leveled Compaction
-
-Default strategy. Limits space amplification.
-
-```
-L0: 4 files trigger compaction
-L1: 256MB
-L2: 2.5GB
-L3: 25GB
-...
-```
-
-### Rate Limiting
-
-Prevent I/O storms:
-
-```bash
-SPIRE_ROCKSDB_RATE_LIMIT_BYTES_PER_SEC=104857600  # 100MB/s
-```
-
-## Tuning Profiles
-
-### Write-Heavy
-
-```bash
-SPIRE_ROCKSDB_WRITE_BUFFER_SIZE=268435456     # 256MB
-SPIRE_ROCKSDB_MAX_WRITE_BUFFER_NUMBER=6
-SPIRE_ROCKSDB_MAX_BACKGROUND_JOBS=8
-```
-
-### Read-Heavy
-
-```bash
-SPIRE_ROCKSDB_BLOCK_CACHE_SIZE=2147483648     # 2GB
-```
-
-### Mixed Workload
-
-```bash
-SPIRE_ROCKSDB_BLOCK_CACHE_SIZE=1073741824     # 1GB
-SPIRE_ROCKSDB_WRITE_BUFFER_SIZE=134217728     # 128MB
-```
+4. Background flush to disk
 
 ## Monitoring
 
-Get RocksDB statistics:
+Get storage statistics:
 
 ```elixir
 Store.KV.Engine.get_stats(Store.KV.Engine)

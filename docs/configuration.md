@@ -16,10 +16,7 @@ All configuration via environment variables with `SPIRE_` prefix.
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `SPIRE_ROCKSDB_PATH` | `/var/lib/spiredb/data` | Data directory |
-| `SPIRE_ROCKSDB_MAX_OPEN_FILES` | `10000` | Max open file handles |
-| `SPIRE_ROCKSDB_BLOCK_CACHE_SIZE` | `536870912` | Block cache (512MB) |
-| `SPIRE_ROCKSDB_WRITE_BUFFER_SIZE` | `134217728` | Write buffer (128MB) |
+| `SPIRE_DATA_PATH` | `/var/lib/spiredb/data` | Data directory |
 
 ### Raft
 
@@ -59,7 +56,7 @@ All configuration via environment variables with `SPIRE_` prefix.
 
 ```bash
 export SPIRE_RESP_PORT=6379
-export SPIRE_ROCKSDB_PATH=/tmp/spiredb/data
+export SPIRE_DATA_PATH=/tmp/spiredb/data
 export SPIRE_RAFT_DATA_DIR=/tmp/spiredb/raft
 export SPIRE_LOG_LEVEL=debug
 export SPIRE_NUM_REGIONS=4
@@ -70,8 +67,7 @@ export SPIRE_NUM_REGIONS=4
 ```bash
 export SPIRE_RESP_PORT=6379
 export SPIRE_RESP_MAX_CONNECTIONS=50000
-export SPIRE_ROCKSDB_PATH=/mnt/data/spiredb
-export SPIRE_ROCKSDB_BLOCK_CACHE_SIZE=1073741824  # 1GB
+export SPIRE_DATA_PATH=/mnt/data/spiredb
 export SPIRE_LOG_LEVEL=info
 ```
 
@@ -84,11 +80,7 @@ export SPIRE_NAMESPACE=spiredb
 export SPIRE_RESP_MAX_CONNECTIONS=50000
 ```
 
-### SSD Storage
 
-```bash
-export SPIRE_ROCKSDB_MAX_OPEN_FILES=20000
-```
 
 ## Elixir Configuration
 
@@ -97,7 +89,7 @@ For source builds, edit `config/prod.exs`:
 ```elixir
 config :spiredb_store,
   resp_port: 6379,
-  rocksdb_path: "/var/lib/spiredb/data"
+  data_path: "/var/lib/spiredb/data"
 
 config :spiredb_pd,
   num_regions: 16,

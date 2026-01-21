@@ -22,15 +22,15 @@ curl http://localhost:9090/metrics
 | `raft_apply_duration_seconds` | Apply latency |
 | `raft_log_size_bytes` | Raft log size |
 
-#### RocksDB
+#### Storage Engine
 
 | Metric | Description |
 |--------|-------------|
-| `rocksdb_write_duration_seconds` | Write latency |
-| `rocksdb_read_duration_seconds` | Read latency |
-| `rocksdb_compaction_pending` | Pending compactions |
-| `rocksdb_block_cache_hits` | Cache hit count |
-| `rocksdb_block_cache_misses` | Cache miss count |
+| `storage_write_duration_seconds` | Write latency |
+| `storage_read_duration_seconds` | Read latency |
+| `storage_compaction_pending` | Pending compactions |
+| `storage_block_cache_hits` | Cache hit count |
+| `storage_block_cache_misses` | Cache miss count |
 
 #### RESP
 
@@ -68,7 +68,7 @@ SPIRE_LOG_LEVEL=debug  # debug, info, warning, error
 |-------|-------|---------|
 | `Region initialized` | info | Region Raft started |
 | `Leader elected` | info | Raft leader change |
-| `Compaction started` | debug | RocksDB compaction |
+| `Compaction started` | debug | Storage compaction |
 | `Slow query` | warning | Command > 100ms |
 | `Connection closed` | debug | Client disconnect |
 
@@ -97,7 +97,7 @@ Panels:
 - Latency P50/P99
 - Active connections
 - Raft leader distribution
-- RocksDB cache hit rate
+- Storage cache hit rate
 
 ### Raft Dashboard
 
@@ -160,7 +160,7 @@ iex --remsh spiredb@hostname
 length(Process.list())
 ```
 
-## RocksDB Statistics
+## Storage Statistics
 
 ```elixir
 Store.KV.Engine.get_stats(Store.KV.Engine)

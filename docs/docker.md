@@ -61,7 +61,7 @@ docker run -d \
 
 | Path | Purpose |
 |------|---------|
-| `/var/lib/spiredb/data` | RocksDB data |
+| `/var/lib/spiredb/data` | Persistent data |
 | `/var/lib/spiredb/raft` | Raft logs |
 | `/var/lib/spiredb/pd` | PD metadata |
 

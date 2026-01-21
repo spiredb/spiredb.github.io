@@ -93,7 +93,7 @@ Key environment variables:
 SPIRE_RESP_PORT=6379
 
 # Storage
-SPIRE_ROCKSDB_PATH=/var/lib/spiredb/data
+SPIRE_DATA_PATH=/var/lib/spiredb/data
 
 # Raft
 SPIRE_RAFT_DATA_DIR=/var/lib/spiredb/raft
